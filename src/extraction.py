@@ -18,7 +18,7 @@ class religiousBookExtractor:
                    }
         
         
-    #fetch_books_and_their_attributes
+    
     def fetch_religious_books_method_one(self) -> list:
         
         religious_books= requests.get(self.apiurl)
