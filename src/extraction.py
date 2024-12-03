@@ -39,6 +39,14 @@ class religiousBookExtractor:
         religious_books_html = religious_books_html.find_all("div", class_ = "elementList")
         
         return religious_books_html
+    
+
+class bookextractor :
+    def __init__(self):
+
+        self.bookapiurl = ''
+        self.bookweburl = ''
+
 
 
 
