@@ -4,6 +4,7 @@ from io import BytesIO
 from PIL import Image
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
+import json
 #from MyApp.utils import *
 
 
@@ -39,13 +40,42 @@ class religiousBookExtractor:
         religious_books_html = religious_books_html.find_all("div", class_ = "elementList")
         
         return religious_books_html
+
+
+class harrypoterbookextractor :
+
+    def __init__(self) -> str:
+        self.bookapiurl = "https://potterapi-fedeperin.vercel.app/en/books"
+
+    def fetchstephenbooks(self) -> list:
+
+        bookresponse = requests.get(self.bookapiurl)
+
+        if bookresponse.status_code != 200:
+            print(f"failed to fetch from api : {bookresponse.status_code}")
+        else:
+            data = bookresponse.text
+            books = json.loads(data)
+
+        return books    
     
 
-class bookextractor :
-    def __init__(self):
-
-        self.bookapiurl = ''
-        self.bookweburl = ''
+class readanybookextractor : 
+    def __init__(self) -> str:   
+        self.bookapiurl = "https://www.readanybook.online/"
+        
+    def fetchreadanybook(self) -> list:
+        
+        bookresponse = requests.get(self.bookapiurl, 'html.parser')
+        
+        if bookresponse.status_code != 200:
+            print(f"failed to fetch from api : {bookresponse.status_code}")
+        else:
+           
+            soup = BeautifulSoup(bookresponse.text ,  features="html.parser")
+        
+        return soup    
+    
 
 
 

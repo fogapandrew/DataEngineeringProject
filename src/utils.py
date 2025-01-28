@@ -4,6 +4,7 @@ import requests
 import sqlite3
 from PIL import Image
 from io import BytesIO
+import random
 
 # constants ir toot directory
 
@@ -138,3 +139,56 @@ class retrieve_book_from_database:
 
         # Close the database connection
         conn.close()
+
+
+
+
+
+# methods for geting any books attribute------------------------
+
+def get_image_title(SOUP):
+    """ This methods returns a dictionary containing image and title.
+    Parameters:
+            NONE
+    Returns:
+    title_image_data (dictionary) : key -> image and value -> string
+    """
+    book_entries = SOUP.find_all('a', class_='link')
+    title_image_data = { }
+    for entry in book_entries:
+        title = entry.get('title')  
+        img_tag = entry.find('img')  
+        img_src = img_tag.get('data-src') if img_tag else None  
+        title_image_data[img_src] = title
+    return title_image_data
+
+def get_authors(SOUP):
+    """ This methods returns a list of authors 
+    Parameters:
+            NONE
+    Returns:
+    all_authors (string) : string of list of authors 
+    """  
+    author_entries = SOUP.find_all('span', class_='list')
+    all_authors = []
+    for author_data in author_entries:
+        author_tag = author_data.find('a')
+        author = author_tag.get('title')
+        author.split(' ', 1)
+        all_authors.append(author.split(' ', 1)[1])
+    return all_authors
+
+def get_book_ratings(SOUP):
+    """ This methods returns a list of ratings 
+    Parameters:
+            NONE
+    Returns:
+    all_ratings (numbers) : intergers of list of ratings 
+    """
+    all_ratings = []
+    book_ratings = SOUP.find_all('div', class_='preview-rate')
+    for b_ratings in book_ratings:
+        ratings = b_ratings.find('b')
+        book_rating = ratings.text
+        all_ratings.append(float(book_rating))
+    return all_ratings
