@@ -30,7 +30,7 @@ def main():
 
 
     # load------------------------
-    combined_christian_books = api_books + webscrape_books + webscrape_readany_books
+    combined_christian_books = api_books + webscrape_books + webscrape_readany_books     
 
     database_path = "books.db"    
     
@@ -42,6 +42,7 @@ def main():
     books_in_db = load_the_database(database_path).read_books_from_db()
 
     
-    print(books_in_db)
+    print(books_in_db) 
+    
 if __name__== "__main__":
     main()

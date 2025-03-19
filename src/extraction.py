@@ -1,10 +1,7 @@
-import re
 import requests
-from io import BytesIO  
-from PIL import Image
-import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 import json
+import time 
 #from MyApp.utils import *
 
 
@@ -45,40 +42,47 @@ class religiousBookExtractor:
 class harrypoterbookextractor :
 
     def __init__(self) -> str:
-        self.bookapiurl = "https://potterapi-fedeperin.vercel.app/en/books"
+        self.api_key = 'AIzaSyDzG4PL_TUH_TV1pVvkkLDiMu5vO_N9iAo' 
+        self.query = "harry potter"
+        self.max_results = 40
+        self.total_books_needed = 100
+        self.bookapiurl = " "
 
     def fetchstephenbooks(self) -> list:
 
-        bookresponse = requests.get(self.bookapiurl)
+        for start in range(0, self.total_books_needed, self.max_results):
+            self.bookapiurl = f"https://www.googleapis.com/books/v1/volumes?q={self.query}&startIndex={start}&maxResults={self.max_results}&key={self.api_key}"
+            response = requests.get(self.bookapiurl)
 
-        if bookresponse.status_code != 200:
-            print(f"failed to fetch from api : {bookresponse.status_code}")
+        if response.status_code != 200:
+            print(f"failed to fetch from api : {response.status_code}")
         else:
-            data = bookresponse.text
+            data = response.text
             books = json.loads(data)
 
         return books    
     
 
-class readanybookextractor : 
-    def __init__(self) -> str:   
+class readanybookextractor:
+    def __init__(self):
         self.bookapiurl = "https://www.readanybook.online/"
-        
-    def fetchreadanybook(self) -> list:
-        
-        bookresponse = requests.get(self.bookapiurl, 'html.parser')
-        
-        if bookresponse.status_code != 200:
-            print(f"failed to fetch from api : {bookresponse.status_code}")
-        else:
-           
-            soup = BeautifulSoup(bookresponse.text ,  features="html.parser")
-        
-        return soup    
-    
 
+    def fetchreadanybook(self):
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(self.bookapiurl)
+                if response.status_code == 436:
+                    raise requests.exceptions.RequestException(f"Custom status code 436 received from {self.bookapiurl}")
+                response.raise_for_status()
+                soup = BeautifulSoup(response.text, features="html.parser")
+                return soup
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching books from ReadAnyBook: {e}")
+                if attempt < max_retries - 1:
+                    print("Retrying...")
+                    time.sleep(2)  # Wait for 2 seconds before retrying
+                else:
+                    print("Max retries reached. Returning empty list.")
+                    return BeautifulSoup("", features="html.parser")
 
-
-
-
-    

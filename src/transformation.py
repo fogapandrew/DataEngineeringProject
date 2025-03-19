@@ -1,8 +1,4 @@
 import re
-from PIL import Image
-import random
-from io import BytesIO
-import requests
 
 
 class religiousBooksTransformer:
@@ -16,10 +12,10 @@ class religiousBooksTransformer:
         for book, doc in enumerate(books_elements['docs']):
             if book >= max_books:
                 break
-            title = str(doc["title"])
-            author = str(doc["author_name"][0])
-            score = float(doc["ratings_average"])
-            cover_id = doc["cover_i"]
+            title = str(doc.get("title"))
+            author = str(doc.get("author_name")[0])
+            score = float(doc.get("ratings_average", 0.0))
+            cover_id = doc.get("cover_i")
             
             if cover_id:
                 book_cover_url = str(f'http://covers.openlibrary.org/b/id/{cover_id}-L.jpg')
@@ -59,10 +55,15 @@ class harrypoterbooktransformer:
     def get_all_harryporterbook(self , harrypotterextrated):
 
         all_harry_books = []
-        for book in harrypotterextrated:
-            image = Image.open(requests.get(book["cover"], stream=True).raw)
+        
+        for book in harrypotterextrated.get("items", []):
+             
+             title = book["volumeInfo"].get("title", "No Title")
+             authors = book["volumeInfo"].get("authors", ["Unknown Author"])
+             rating = float(book["volumeInfo"].get("averageRating", 0.0))
+             thumbnail = str(book["volumeInfo"].get("imageLinks", {}).get("thumbnail", "No Image"))
             
-            all_harry_books.append([book["number"] , book["title"], book["releaseDate"] , book["description"], image])
+             all_harry_books.append([title , authors, rating, thumbnail])
 
         return all_harry_books
         

@@ -4,7 +4,6 @@ import requests
 import sqlite3
 from PIL import Image
 from io import BytesIO
-import random
 
 # constants ir toot directory
 
@@ -162,6 +161,7 @@ def get_image_title(SOUP):
         title_image_data[img_src] = title
     return title_image_data
 
+
 def get_authors(SOUP):
     """ This methods returns a list of authors 
     Parameters:
@@ -177,6 +177,8 @@ def get_authors(SOUP):
         author.split(' ', 1)
         all_authors.append(author.split(' ', 1)[1])
     return all_authors
+
+
 
 def get_book_ratings(SOUP):
     """ This methods returns a list of ratings 
